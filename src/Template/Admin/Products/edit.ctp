@@ -2,6 +2,17 @@
 /**
   * @var \App\View\AppView $this
   */
+
+echo $this->Html->css('/bootstrap-fileinput-master/css/fileinput.min');
+echo $this->Html->script('/bootstrap-fileinput-master/js/plugins/piexif.min.js');
+echo $this->Html->script('/bootstrap-fileinput-master/js/plugins/sortable.min.js');
+echo $this->Html->script('/bootstrap-fileinput-master/js/plugins/purify.min.js');
+echo $this->Html->script('/bootstrap-fileinput-master/js/fileinput.min.js');
+echo $this->Html->script('/bootstrap-fileinput-master/themes/fa/theme.js');
+echo $this->Html->script('/bootstrap-fileinput-master/js/locales/pt-BR.js');
+
+echo $this->Html->css('AdminLTE./plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min');
+echo $this->Html->script('AdminLTE./plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min');
 ?>
 
 <style>
@@ -24,26 +35,18 @@
 <?php
 	    	        echo $this->Form->control('name', ['label' => 'Name:']);
 	    	        echo $this->Form->control('short_description', ['label' => 'Descrição curta:']);
-	    	        echo $this->Form->control('description', ['type' => 'textarea', 'label' => 'Descrição:']);
 	    	        echo $this->Form->control('price', ['label' => 'Preço:']);
 	    	        echo $this->Form->control('status', ['label' => 'Ativo']);
 ?>
 				</div>
 			</div>
 			<div class="col-xs-12 col-md-6">
+				<?= $this->Form->control('description', ['id' => 'description', 'type' => 'textarea', 'rows' => '8', 'label' => 'Descrição:']);?>
+			</div>
+			<div class="col-xs-12 col-md-12">
 				<div class="col-xs-12">
-			        <label>Upload de Imagem</label>
-			        <div class="input-group">
-			            <span class="input-group-btn">
-			                <span class="btn btn-default btn-file">
-			                    Procurar… <input type="file" id="imgInp" name="file_product">
-			                </span>
-			            </span>
-			            <input type="text" class="form-control" readonly>
-			        </div>
-				</div>
-				<div class="col-xs-12">
-					<?php echo $this->Html->image($image, ['id' => 'img-upload']);?>
+					<label class="control-label">Imagens:</label>
+					<input id="input-24" name="files_product[]" type="file" multiple class="file-loading">
 				</div>
 			</div>
 		</div>
@@ -53,3 +56,59 @@
 		</div>
 	</div>
 </div>
+
+<?php 
+	$imagesPreview = '';
+	$initialPreviewConfig = '';
+	
+	if(count($images)){
+		foreach($images as $image){
+			$imagesPreview[] = $this->Url->image($image);
+		}
+		$imagesPreview = implode('", "', $imagesPreview);
+		
+		for($i=1; $i <= count($images); $i++){
+			$a = explode('/', $images[$i-1]);
+			$initialPreviewConfig .= '{caption: "Imagem '.$i.'", width: "120px", key: "' .$product->id.'-'.end($a). '"},';
+		}
+		
+	}
+?>
+
+<script>
+	$(document).on('ready', function() {
+	    $("#input-24").fileinput({
+	        initialPreview: [
+	        	<?php echo '"' .$imagesPreview. '"' ?>
+	        ],
+	        initialPreviewAsData: true,
+	        initialPreviewConfig: [
+	            <?php echo $initialPreviewConfig; ?>
+	        ],
+	        deleteUrl: "<?php echo $this->Url->build(['controller' => 'Products', 'action' => 'removeImage']); ?>",
+	        overwriteInitial: false,
+	        maxFileSize: 1000,
+	        maxImageWidth: 1280,
+	        maxImageHeight: 760,
+	        
+	        showCaption: true,
+	        showRemove: false,
+	        showUpload: false,
+
+	        allowedFileExtensions: ["jpg", "png", "gif"]
+	    });
+	});
+
+	$('#description').wysihtml5({
+		toolbar: {
+			"font-styles": true, //Font styling, e.g. h1, h2, etc. Default true
+			"emphasis": true, //Italics, bold, etc. Default true
+			"lists": true, //(Un)ordered lists, e.g. Bullets, Numbers. Default true
+			"html": false, //Button which allows you to edit the generated HTML. Default false
+			"link": false, //Button to insert a link. Default true
+			"image": false, //Button to insert an image. Default true,
+			"color": false, //Button to change color of font  
+			"blockquote": true
+		}
+	});
+</script>

@@ -229,7 +229,7 @@ Configure::write('Theme', [
 		'title' => 'AdminLTE',
 		'logo' => [
 				'mini' => '<b>D</b>C',
-				'large' => '<b>Dry</b>Club'
+				'large' => '<b>99</b>Express'
 		],
 		'login' => [
 				'show_remember' => true,
